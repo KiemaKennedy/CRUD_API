@@ -1,4 +1,4 @@
-from models import db, ma
+from . import db, ma
 
 # Create a Product Class/Model
 class Product(db.Model):

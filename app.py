@@ -2,27 +2,36 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from routes.productRoutes import product_blueprint
+from models import db, ma
 import os
 
 # Initialize App
-app = Flask(__name__)
+# app = Flask(__name__)
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+# # # Init database
+# db = SQLAlchemy()
 
-# Create a Database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# # # Initialize Marshmallow
+# ma = Marshmallow()
+def create_app(config_name):
+    app = Flask(__name__)
 
+    # basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Init database
-db = SQLAlchemy(app)
+    # Define SQLAlchemy configurations
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'db.sqlite')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize Marshmallow
-ma = Marshmallow(app)
+    db.init_app(app)
+    ma.init_app(app)
 
-# Rgeister blueprint
-app.register_blueprint(product_blueprint)
+    app.register_blueprint(product_blueprint)
+
+    return app
+
 
 # Run Server
-if __name__ ==  '__main__':
+if __name__ == '__main__':
+    #  Use the "development" configuration for local testing
+    app = create_app(config_name='development')
     app.run(debug=True)

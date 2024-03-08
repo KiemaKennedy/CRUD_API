@@ -6,4 +6,4 @@ db = SQLAlchemy()
 ma = Marshmallow()
 
 # Import your models here
-from models.productModel import Product
+from .productModel import Product
