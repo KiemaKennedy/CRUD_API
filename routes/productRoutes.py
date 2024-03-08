@@ -3,6 +3,7 @@ from app import db
 from models.productModel import Product, product_schema, products_schema
 
 product_blueprint = Blueprint('products', __name__)
+
 # CREATE ROUTES
 # create a product
 @product_blueprint.route('/product', methods=['POST'])
