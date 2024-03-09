@@ -60,3 +60,29 @@ def delete_category(id):
     db.session.commit()
 
     return category_schema.jsonify(category)
+
+# End point to return fields for use in the frontend
+@category_blueprint.route('/category/fields')
+def get_category_fields():
+    fields = Category.__table__.columns.keys()
+    return jsonify({'fields': fields})
+
+@category_blueprint.route("/category/search", methods=["GET"])
+def search_categories():
+    query_field = request.args.get("field")
+    query_value = request.args.get("value")
+
+    # Handle search based on the specified field
+    if query_field == "categoryName":
+        category = Category.query.filter(Category.categoryName.ilike(f"%{query_value}%")).all()
+    elif query_field == "categoryID":
+        category = Category.query.filter_by(categoryID=query_value).all()
+    elif query_field == "categoryDescription":
+        category = Category.query.filter_by(Category.categoryDescription.ilike(f"%{query_value}%")).all()
+    else:
+        # Return an error response if the specified field is not supported
+        return jsonify({"error": "Invalid search field"}), 400
+
+    # Serialize the search results
+    result = categories_schema.dump(category)
+    return jsonify(result)

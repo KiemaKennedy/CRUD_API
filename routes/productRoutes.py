@@ -65,3 +65,33 @@ def delete_product(id):
     db.session.commit()
 
     return product_schema.jsonify(product)
+
+# End point to return fields for use in the frontend
+@product_blueprint.route('/product/fields')
+def get_product_fields():
+    fields = Product.__table__.columns.keys()
+    return jsonify({'fields': fields})
+
+@product_blueprint.route("/product/search", methods=["GET"])
+def search_products():
+    query_field = request.args.get("field")
+    query_value = request.args.get("value")
+
+    # Handle search based on the specified field
+    if query_field == "productName":
+        products = Product.query.filter(Product.productName.ilike(f"%{query_value}%")).all()
+    elif query_field == "supplierID":
+        products = Product.query.filter_by(supplierID=query_value).all()
+    elif query_field == "categoryID":
+        products = Product.query.filter_by(categoryID=query_value).all()
+    elif query_field == "productID":
+        products = Product.query.filter_by(productID=query_value).all()
+    elif query_field == "price":
+        products = Product.query.filter_by(price=query_value).all()
+    else:
+        # Return an error response if the specified field is not supported
+        return jsonify({"error": "Invalid search field"}), 400
+
+    # Serialize the search results
+    result = products_schema.dump(products)
+    return jsonify(result)

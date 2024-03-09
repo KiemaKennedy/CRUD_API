@@ -73,3 +73,37 @@ def delete_supplier(id):
     db.session.commit()
 
     return supplier_schema.jsonify(supplier)
+
+# End point to return fields for use in the frontend
+@supplier_blueprint.route('/supplier/fields')
+def get_supplier_fields():
+    fields = Supplier.__table__.columns.keys()
+    return jsonify({'fields': fields})
+
+@supplier_blueprint.route("/supplier/search", methods=["GET"])
+def search_suppliers():
+    query_field = request.args.get("field")
+    query_value = request.args.get("value")
+
+    # Handle search based on the specified field
+    if query_field == "supplierName":
+        supplier = Supplier.query.filter(Supplier.supplierName.ilike(f"%{query_value}%")).all()
+    elif query_field == "contactName":
+        supplier = Supplier.query.filter(Supplier.contactName.ilike(f"%{query_value}%")).all()
+    elif query_field == "supplierAddress":
+        supplier = Supplier.query.filter(Supplier.supplierAddress.ilike(f"%{query_value}%")).all()
+    elif query_field == "supplierCity":
+        supplier = Supplier.query.filter(Supplier.supplierCity.ilike(f"%{query_value}%")).all()
+    elif query_field == "supplierCountry":
+        supplier = Supplier.query.filter(Supplier.supplierCountry.ilike(f"%{query_value}%")).all()
+    elif query_field == "supplierID":
+        supplier = Supplier.query.filter_by(supplierID=query_value).all()
+    elif query_field == "phoneNumber":
+        supplier = Supplier.query.filter(Supplier.phoneNumber.ilike(f"%{query_value}%")).all()
+    else:
+        # Return an error response if the specified field is not supported
+        return jsonify({"error": "Invalid search field"}), 400
+
+    # Serialize the search results
+    result = suppliers_schema.dump(supplier)
+    return jsonify(result)

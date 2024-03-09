@@ -2,6 +2,7 @@ from flask import Flask
 from routes.productRoutes import product_blueprint
 from routes.supplierRoutes import supplier_blueprint
 from routes.categoryRoutes import category_blueprint
+from flask_cors import CORS
 from models import db, ma
 import os
 
@@ -20,7 +21,8 @@ def create_app(config_name):
     app.register_blueprint(product_blueprint)
     app.register_blueprint(supplier_blueprint)
     app.register_blueprint(category_blueprint)
-
+    
+    CORS(app)
 
     # Function to create or update tables/models in the db on app startup
     def create_or_update_tables():
