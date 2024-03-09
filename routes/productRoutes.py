@@ -4,16 +4,18 @@ from models import db
 
 product_blueprint = Blueprint('products', __name__)
 
-# CREATE ROUTES
+# CREATE PRODUCT ROUTES
 # create a product
+# NOTE: use request.json.get() for optional fields
 @product_blueprint.route('/product', methods=['POST'])
 def add_a_product():
-    name = request.json['name']
-    description = request.json['description']
-    price = request.json['price']
-    qty = request.json.get('qty')
+    productName = request.json["productName"]
+    supplierID = request.json["supplierID"]
+    categoryID = request.json["categoryID"]
+    unit = request.json["unit"]
+    price = request.json["price"]
 
-    new_product = Product(name, description, price, qty)
+    new_product = Product(productName, supplierID, categoryID, unit, price)
     db.session.add(new_product)
     db.session.commit()
 
@@ -38,16 +40,18 @@ def update_product(id):
 
     # Gets an existing product - specified by ID
     product = Product.query.get(id)
-    name = request.json['name']
-    description = request.json.get("description")
-    price = request.json['price']
-    qty = request.json['qty']
+    productName = request.json["productName"]
+    supplierID = request.json["supplierID"]
+    categoryID = request.json["categoryID"]
+    unit = request.json["unit"]
+    price = request.json["price"]
 
     # Use get the new values from the request and assign them to our product
-    product.name = name
-    product.description = description
+    product.productName = productName
+    product.supplierID = supplierID
+    product.categoryID = categoryID
+    product.unit = unit
     product.price = price
-    product.qty = qty
 
     db.session.commit()
 

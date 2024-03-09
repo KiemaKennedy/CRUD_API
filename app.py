@@ -1,18 +1,10 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 from routes.productRoutes import product_blueprint
+from routes.supplierRoutes import supplier_blueprint
+from routes.categoryRoutes import category_blueprint
 from models import db, ma
 import os
 
-# Initialize App
-# app = Flask(__name__)
-
-# # # Init database
-# db = SQLAlchemy()
-
-# # # Initialize Marshmallow
-# ma = Marshmallow()
 def create_app(config_name):
     app = Flask(__name__)
 
@@ -26,9 +18,19 @@ def create_app(config_name):
     ma.init_app(app)
 
     app.register_blueprint(product_blueprint)
+    app.register_blueprint(supplier_blueprint)
+    app.register_blueprint(category_blueprint)
+
+
+    # Function to create or update tables/models in the db on app startup
+    def create_or_update_tables():
+        with app.app_context():
+            db.create_all()
+
+    # Call the function to create or update tables
+    create_or_update_tables()
 
     return app
-
 
 # Run Server
 if __name__ == '__main__':

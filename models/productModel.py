@@ -1,23 +1,30 @@
 from . import db, ma
+from models.categoryModel import Category
 
 # Create a Product Class/Model
 class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True) #autoincrement by default
-    name = db.Column(db.String(100), unique=True)
-    description = db.Column(db.String(200))
+    productID = db.Column(db.Integer, primary_key=True) #autoincrement by default
+    productName = db.Column(db.String(100), unique=True)
+    supplierID = db.Column(db.Integer, db.ForeignKey('supplier.supplierID'))
+    categoryID = db.Column(db.Integer, db.ForeignKey('category.categoryID'))
+    unit = db.Column(db.String(100))
     price = db.Column(db.Float)
-    qty = db.Column(db.Integer)
 
-    def  __init__(self, name, description, price, qty):
-        self.name = name
-        self.description = description
+    # create foreign keys for supplierID and categoryID
+    supplier = db.relationship('Supplier', foreign_keys=[supplierID])
+    category = db.relationship('Category', foreign_keys=[categoryID])
+
+    def  __init__(self, productName, supplierID, categoryID, unit, price):
+        self.productName = productName
+        self.supplierID = supplierID
+        self.categoryID = categoryID
+        self.unit = unit
         self.price = price
-        self.qty = qty
 
 # Product Schema
 class  ProductSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'description', 'price', 'qty')
+        fields = ('productID', 'productName', 'supplierID', 'categoryID', 'unit', 'price')
 
 # Init Schema
 product_schema = ProductSchema()
