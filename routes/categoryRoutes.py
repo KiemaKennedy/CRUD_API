@@ -31,6 +31,8 @@ def get_all_categorys():
 @category_blueprint.route("/category/<id>", methods=['GET'])
 def get_one_category(id):
     category = Category.query.get(id)
+    if not category:
+        return jsonify({'message': 'Category does not exist'}), 404
     return category_schema.jsonify(category)
 
 # Update a category
@@ -40,6 +42,8 @@ def update_category(id):
     # Gets an existing category - specified by ID
     
     category = category.query.get(id)
+    if not category:
+        return jsonify({'message': 'Category does not exist'}), 404
     categoryName = request.json['categoryName']
     categoryDescription = request.json['categoryDescription']
     
@@ -56,6 +60,8 @@ def update_category(id):
 @category_blueprint.route("/category/<id>", methods=["DELETE"])
 def delete_category(id):
     category = Category.query.get(id)
+    if not category:
+        return jsonify({'message': 'Category does not exist'}), 404
     db.session.delete(category)
     db.session.commit()
 
